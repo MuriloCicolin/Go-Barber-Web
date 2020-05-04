@@ -6,7 +6,7 @@ import { useAuth } from '../../hooks/auth';
 const Dashboard: React.FC = () => {
   const { signOut } = useAuth();
 
-  useCallback(() => {
+  const logout = useCallback(() => {
     signOut();
   }, [signOut]);
 
@@ -15,7 +15,7 @@ const Dashboard: React.FC = () => {
       <Container>
         <h1>Dashboard</h1>
 
-        <button type="button" onClick={signOut}>
+        <button type="button" onClick={logout}>
           Logout
         </button>
       </Container>
