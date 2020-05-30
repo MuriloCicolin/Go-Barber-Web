@@ -3,6 +3,7 @@ import DayPicker, { DayModifiers } from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 import { format, isToday, isAfter } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
+import { FaSpinner } from 'react-icons/fa';
 
 import { FiPower, FiClock } from 'react-icons/fi';
 import { parseISO } from 'date-fns/esm';
@@ -50,6 +51,7 @@ const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth();
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
     if (modifiers.available && !modifiers.disabled) {
@@ -75,6 +77,7 @@ const Dashboard: React.FC = () => {
   }, [currentMonth, user.id]);
 
   useEffect(() => {
+    setLoading(true);
     api
       .get<Appointment[]>('/appointments/me', {
         params: {
@@ -91,6 +94,7 @@ const Dashboard: React.FC = () => {
           };
         });
         setAppointments(appointmentsFormatted);
+        setLoading(false);
       });
   }, [selectedDate]);
 
@@ -181,55 +185,61 @@ const Dashboard: React.FC = () => {
             </NextAppointment>
           )}
 
-          <Section>
-            <strong>Manhã</strong>
+          {loading ? (
+            <FaSpinner className="loading" size={45} />
+          ) : (
+            <>
+              <Section>
+                <strong>Manhã</strong>
 
-            {morningAppointments.length === 0 && (
-              <p>Nenhum agendamento no período da manhã</p>
-            )}
+                {morningAppointments.length === 0 && (
+                  <p>Nenhum agendamento no período da manhã</p>
+                )}
 
-            {morningAppointments.map((appointment) => (
-              <Appointment key={appointment.id}>
-                <span>
-                  <FiClock />
-                  {appointment.hourFormatted}
-                </span>
+                {morningAppointments.map((appointment) => (
+                  <Appointment key={appointment.id}>
+                    <span>
+                      <FiClock />
+                      {appointment.hourFormatted}
+                    </span>
 
-                <div>
-                  <img
-                    src={appointment.user.avatar_url}
-                    alt={appointment.user.name}
-                  />
-                  <strong>{appointment.user.name}</strong>
-                </div>
-              </Appointment>
-            ))}
-          </Section>
+                    <div>
+                      <img
+                        src={appointment.user.avatar_url}
+                        alt={appointment.user.name}
+                      />
+                      <strong>{appointment.user.name}</strong>
+                    </div>
+                  </Appointment>
+                ))}
+              </Section>
 
-          <Section>
-            <strong>Tarde</strong>
+              <Section>
+                <strong>Tarde</strong>
 
-            {afternoonAppoinments.length === 0 && (
-              <p>Nenhum agendamento no perído da tarde</p>
-            )}
+                {afternoonAppoinments.length === 0 && (
+                  <p>Nenhum agendamento no perído da tarde</p>
+                )}
 
-            {afternoonAppoinments.map((appointment) => (
-              <Appointment key={appointment.id}>
-                <span>
-                  <FiClock />
-                  {appointment.hourFormatted}
-                </span>
+                {afternoonAppoinments.map((appointment) => (
+                  <Appointment key={appointment.id}>
+                    <span>
+                      <FiClock />
+                      {appointment.hourFormatted}
+                    </span>
 
-                <div>
-                  <img
-                    src={appointment.user.avatar_url}
-                    alt={appointment.user.name}
-                  />
-                  <strong>{appointment.user.name}</strong>
-                </div>
-              </Appointment>
-            ))}
-          </Section>
+                    <div>
+                      <img
+                        src={appointment.user.avatar_url}
+                        alt={appointment.user.name}
+                      />
+                      <strong>{appointment.user.name}</strong>
+                    </div>
+                  </Appointment>
+                ))}
+              </Section>
+            </>
+          )}
         </Schedule>
         <Calendar>
           <DayPicker

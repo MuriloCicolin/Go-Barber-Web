@@ -1,5 +1,16 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { shade } from 'polished';
+
+const animateLoading = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+
+`;
 
 export const Container = styled.div``;
 
@@ -60,6 +71,13 @@ export const Content = styled.main`
   max-width: 1120px;
   margin: 64px auto;
   display: flex;
+
+  .loading {
+    color: #ff9000;
+    display: flex;
+    margin: 60px auto;
+    animation: ${animateLoading} 2s linear infinite;
+  }
 `;
 
 export const Schedule = styled.div`
